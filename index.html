@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Jasper 的立體書：熊貓寶寶在哪裡？</title>
 <meta name="description" content="A pop-up book adventure: Jasper helps Panda Mom find her five lost panda babies.">
-<link rel="stylesheet" href="style.css?v=1">
+<link rel="stylesheet" href="style.css?v=2">
 </head>
 <body>
 <canvas id="view"></canvas>
@@ -24,7 +24,7 @@
 </div>
 
 <div id="hud" hidden>
-  <div id="goal" hidden><b data-t="goalHead">現在要做</b><span id="goalText"></span></div>
+  <div id="goal" hidden><b data-t="goalHead">現在要做</b><span id="goalText"></span><button id="hintBtn" class="small" hidden>💡 <span data-t="hint">提示</span></button></div>
   <div id="right"><div id="babies"></div><div id="stars">⭐ 0 / 5</div><button id="menuBtn" aria-label="menu">☰</button></div>
 </div>
 
@@ -50,6 +50,6 @@
   </div>
 </div>
 
-<script type="module" src="js/main.js?v=1"></script>
+<script type="module" src="js/main.js?v=2"></script>
 </body>
 </html>

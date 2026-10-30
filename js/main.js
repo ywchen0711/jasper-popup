@@ -151,11 +151,15 @@ function moveJasper(dt, ax, az) {
   if (Math.abs(J.vx) > 0.25 && len > 0.1) J.face = J.vx > 0 ? 1 : -1;
   if (J.moving) { J.walkT += dt; const st = Math.floor(J.walkT / 0.14) % 2; if (st !== J.step) { J.step = st; if (!onIce) sfx('step'); } }
   if (onIce && !J.wasIce && moved > 0.004) sfx('slide'); J.wasIce = onIce;
-  if (moved > 0.0005) { const l = trail[0]; if (!l || Math.hypot(l[0] - J.x, l[1] - J.z) > 0.06) { trail.unshift([J.x, J.z]); if (trail.length > 120) trail.pop(); } }
+  if (moved > 0.0005) track();
 }
+function track() { const l = trail[0]; if (!l || Math.hypot(l[0] - J.x, l[1] - J.z) > 0.06) { trail.unshift([J.x, J.z]); if (trail.length > 120) trail.pop(); } }
+// a spread can move Jasper itself (sliding on ice): it gets the stick, or the way to a tapped point
+function tapAxis() { if (!goTo) return null; const dx = goTo.x - J.x, dz = goTo.z - J.z; return Math.abs(dx) > Math.abs(dz) ? [Math.sign(dx), 0] : [0, Math.sign(dz)]; }
+function setPos(x, z) { J.x = x; J.z = z; track(); }
 function drawParty(dt, time) {
   const P = J.piece; P.hinge.position.set(J.x, 0.01, J.z);
-  const want = J.cheer ? ART.jasper(3) : J.moving ? ART.jasper(1 + J.step) : ART.jasper(0);
+  const L = J.face < 0, want = J.cheer ? ART.jasper(3, L) : J.moving ? ART.jasper(1 + J.step, L) : ART.jasper(0, L);
   if (P.cut !== want) P.setCut(want); P.flip(J.face < 0);
   P.wob.position.y = J.moving ? Math.abs(Math.sin(J.walkT * 22)) * 0.06 : 0; P.wob.rotation.z = J.moving ? Math.sin(J.walkT * 11) * 0.05 : Math.sin(time * 2) * 0.012;
   followers.forEach((f, k) => {
@@ -183,7 +187,7 @@ function camUpdate(dt, snap) {
 function camFollow() {
   if (cam.overview) { cam.tw = 22; cam.tx = 0; cam.tz = 0.2; return; }
   const w = fitWidth(); cam.tw = w; const half = Math.max(0, 10.3 - w / 2);
-  cam.tx = Math.max(-half, Math.min(half, J.x)); cam.tz = 0.35;
+  cam.tx = Math.max(-half, Math.min(half, cam.look ?? J.x)); cam.tz = 0.35;
 }
 
 // ---------------------------------------------------------------- talking
@@ -228,11 +232,11 @@ function topOf(p, pad = 0.2) { const h = p.kind === 'stand' ? p.h * Math.max(0.2
 function placeOver(el, p, pad) { const s = screenOf(topOf(p, pad)); const w = el.offsetWidth, h = el.offsetHeight; el.style.left = Math.max(8, Math.min(innerWidth - w - 8, s.x - w / 2)) + 'px'; el.style.top = Math.max(8, s.y - h - 14) + 'px'; }
 
 // ---------------------------------------------------------------- goals and hints
-let goalText = null, goalAt = null, idleT = 0;
+let goalText = null, goalAt = null, idleT = 0, hintT = 0;
 const hint = { obj: sprite('arrow', 0.55), t: 0 }; hint.obj.visible = false; hint.obj.center.set(0.5, 0);
-function goal(text, at) { goalText = text; goalAt = at || null; idleT = 0; $('goal').hidden = !text; $('goalText').textContent = T(text); if (text) { $('goal').classList.remove('new'); void $('goal').offsetWidth; $('goal').classList.add('new'); } }
+function goal(text, at) { goalText = text; goalAt = at || null; idleT = 0; hintT = 0; $('hintBtn').hidden = !at; $('goal').hidden = !text; $('goalText').textContent = T(text); if (text) { $('goal').classList.remove('new'); void $('goal').offsetWidth; $('goal').classList.add('new'); } }
 function hintTick(dt, time) {
-  idleT += dt; const show = goalAt && idleT > 9 && !run.busy;
+  idleT += dt; const show = goalAt && hintT > 0 && !run.busy; hintT -= dt;
   hint.obj.visible = !!show;
   if (show) { const [x, z, y = 1.6] = typeof goalAt === 'function' ? goalAt() : goalAt; hint.obj.position.set(x, y + Math.abs(Math.sin(time * 4)) * 0.35, z); }
 }
@@ -293,13 +297,13 @@ function done(text) {
   S.done = true; const [x, z] = S.def.exit;
   exitMark.visible = exitGlow.visible = true; exitMark.position.set(x, 0.75, z); exitGlow.position.set(x, 0.3, z);
   goal(text || { zh: '走到右下角的箭頭，翻到下一頁', en: 'Walk to the arrow in the corner to turn the page' }, [x, z, 1.4]);
-  item({ x, z, r: 1.3, icon: '📖', label: { zh: '翻到下一頁', en: 'Turn the page' }, act: () => turnPage() });
+  item({ x, z, r: 1.3, icon: '📖', label: { zh: '翻到下一頁', en: 'Turn the page' }, act: () => { turnPage(); } }); // not awaited: the next page's story runs as its own script
 }
 const exitMark = sprite('turn', 0.8); exitMark.visible = false; const exitGlow = sprite('glow', 2.2, true); exitGlow.visible = false;
 
-const g = { T, say, pip, goal, wait, anim, item, solid, walk, piece, glow, lamps, burst, wobble, hop, morph, raise, liftFlap, found, star, done, who, sfx, J, followers, save, ease,
+const g = { blocked, setPos, tapAxis, clearTap: () => { goTo = null; }, stopWalk: () => { J.vx = J.vz = 0; }, T, say, pip, goal, wait, anim, item, solid, walk, piece, glow, lamps, burst, wobble, hop, morph, raise, liftFlap, found, star, done, who, sfx, J, followers, save, ease,
   stand: (cut, x, z, o) => piece(cut, 'stand', x, z, o), flap: (cut, x, z, o) => piece(cut, 'flap', x, z, o), flat: (cut, x, z, o) => piece(cut, 'flat', x, z, o),
-  get lang() { return save.lang; }, get busy() { return run.busy; }, run, ART, near: (x, z, r) => Math.hypot(J.x - x, J.z - z) < r, cheer: (v) => { J.cheer = v; }, lantern: (v) => { J.lantern = v; }, camOverview: (v) => { cam.overview = v; }, end: () => ending(), sprite, screenOf };
+  get lang() { return save.lang; }, get busy() { return run.busy; }, run, ART, near: (x, z, r) => Math.hypot(J.x - x, J.z - z) < r, cheer: (v) => { J.cheer = v; }, lantern: (v) => { J.lantern = v; }, camOverview: (v) => { cam.overview = v; }, look: (x) => { cam.look = x; }, end: () => ending(), sprite, screenOf };
 
 // ---------------------------------------------------------------- building a spread
 const pageTex = new Map();
@@ -314,7 +318,7 @@ function lightFor(d) {
   hemi.color.set(L.sky); hemi.groundColor.set(L.ground); hemi.intensity = L.hemi; sunL.color.set(L.sun); sunL.intensity = L.sunI; sunL.position.set(...L.sunPos); renderer.toneMappingExposure = L.exp; scene.background.set(L.bg);
 }
 function buildSpread(i) {
-  clearSpread(); SI = i; const d = SPREADS[i];
+  clearSpread(); SI = i; const d = SPREADS[i]; cam.look = null;
   S = { def: d, st: {}, done: false, i };
   lightFor(d); J.lantern = false; J.cheer = false;
   d.setup(g, S.st);
@@ -454,7 +458,7 @@ function setLangButtons() {
 const UI = {
   start: { zh: '打開書本 ▶', en: 'Open the book ▶' }, cont: { zh: '從上次的地方繼續', en: 'Continue where I stopped' }, voice: { zh: '朗讀', en: 'Read aloud' }, music: { zh: '音樂', en: 'Music' }, off: { zh: '（關）', en: ' (off)' },
   resume: { zh: '繼續讀', en: 'Keep reading' }, cover: { zh: '闔上書本', en: 'Close the book' }, again: { zh: '再讀一次', en: 'Read it again' }, theend: { zh: '全劇終', en: 'The End' },
-  starsGot: { zh: '找到的星星', en: 'Stars found' }, tip: { zh: '方向鍵或點畫面走路・空白鍵或點東西互動', en: 'Arrow keys or tap to walk · Space or tap things to use them' }, goalHead: { zh: '現在要做', en: 'Now' },
+  starsGot: { zh: '找到的星星', en: 'Stars found' }, tip: { zh: '方向鍵或點畫面走路・空白鍵或點東西互動', en: 'Arrow keys or tap to walk · Space or tap things to use them' }, goalHead: { zh: '現在要做', en: 'Now' }, hint: { zh: '提示', en: 'Hint' },
 };
 $('startBtn').onclick = () => openBook(false);
 $('continue').onclick = () => openBook(true);
@@ -462,6 +466,7 @@ document.querySelectorAll('[data-lang]').forEach((b) => (b.onclick = () => { sav
 $('voiceBtn').onclick = () => { save.voice = !save.voice; setVoice(save.voice); store(); setLangButtons(); };
 $('musicBtn').onclick = () => { save.music = !save.music; setMusic(save.music); store(); setLangButtons(); };
 $('menuBtn').onclick = () => toggleMenu();
+$('hintBtn').onclick = (e) => { e.stopPropagation(); hintT = 6; sfx('sparkle'); };
 $('resumeBtn').onclick = () => toggleMenu(false);
 $('coverBtn').onclick = () => { toggleMenu(false); if (mode === 'play' && !run.busy) closeBook(); };
 $('againBtn').onclick = () => closeBook();
@@ -474,7 +479,7 @@ addEventListener('resize', resize); resize();
 function frame(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now; time += dt;
   const [ax, az] = axis();
-  if (mode === 'play' && !run.busy && $('menu').hidden) moveJasper(dt, ax, az); else { J.moving = false; J.vx = J.vz = 0; }
+  if (mode === 'play' && !run.busy && $('menu').hidden) { if (!(S?.def.move && S.def.move(g, S.st, dt, ax, az))) moveJasper(dt, ax, az); } else { J.moving = false; J.vx = J.vz = 0; }
   if (Math.hypot(ax, az) > 0.2) idleT = 0;
   runTweens(dt); runParts(dt);
   if (mode === 'play' || mode === 'turn' || mode === 'end' || mode === 'closing') drawParty(dt, time);

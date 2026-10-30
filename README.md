@@ -11,17 +11,20 @@ their white die-cut rims, the watercolor pages and the cover. The music box and 
 
 ## The book
 
-| Page | | What to do |
+| Page | | The puzzle |
 |---|---|---|
-| 1 | 竹林的家 The Bamboo Home | Lift the pile of leaves (a lift-the-flap) |
-| 2 | 花花草原 The Flower Meadow | Pull the paper tab so a bridge folds down, then turn the flower wheel |
-| 3 | 月光森林 The Moonlit Forest | It is night. Jasper carries a lantern. Catch three fireflies, and they light up a hollow log |
-| 4 | 雪山 The Snowy Mountain | Find the snowman who keeps sneezing. Mind the slippery ice! |
-| 5 | 熱鬧的市集 The Busy Market | Open the steamer that wiggles and munches |
+| 1 | 竹林的家 The Bamboo Home | Hide-and-seek: Yuanyuan hides in one of four places. Her place rustles, but only when you are near, and every wrong guess makes her sneak somewhere else. Once found she runs away: corner her and catch her. |
+| 2 | 花花草原 The Flower Meadow | Three pull tabs (● ▲ ■) each flip a different set of bridge boards; get all three down. Then the big flower sings a tune on four petals: step on them in the same order, three tunes, longer each time. |
+| 3 | 月光森林 The Moonlit Forest | Night, by lantern light. Catch four shy fireflies (they dart off if you rush them, then rest). Two soot sprites wander the paths: touch one and a firefly flies away. |
+| 4 | 雪山 The Snowy Mountain | A sliding-ice puzzle: once on the ice you slide until a rock stops you, and you can only get on and off from the left and the bottom. Stop next to the sneezing snowman (seven slides at the least). |
+| 5 | 熱鬧的市集 The Busy Market | A shell game: Mr. Rabbit hides Qiuqiu under a steamer and shuffles. Win three rounds, each faster. |
 | 6 | 回家囉 Home Again | Bring all five babies back to Panda Mom |
 
-Every page also hides a **star** (shake a bush, tip a rock, touch a glowing mushroom, knock on the igloo, look at
-the fruit stall).
+**Stars** are for doing it well: the hide-and-seek spot that isn't Yuanyuan's, the flower tune with no mistake,
+the fireflies without a single soot-sprite touch, a hard-to-reach square on the ice, and the shuffle without a wrong
+guess. Stuck? The 💡 button next to the goal shows where to go.
+
+Jasper has a small mole just to the right of his philtrum (his right), and it stays on that side when he turns.
 
 ## Controls
 

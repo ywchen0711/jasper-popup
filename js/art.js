@@ -47,8 +47,10 @@ const scaled = (a, w, h, bw, bh) => a.scale(w / bw, h / bh);
 function wash(a, x, y, r, col, alpha = 0.35) { a.save(); a.globalAlpha = alpha; const g = a.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, col); g.addColorStop(1, 'rgba(255,255,255,0)'); a.fillStyle = g; a.fillRect(x - r, y - r, r * 2, r * 2); a.restore(); }
 
 // ---------------------------------------------------------------- Jasper (faces right; f: 0 stand, 1/2 steps, 3 cheer)
-export function jasper(f = 0) {
-  return cutout('jasper' + f, 1.05, 1.75, (a, w, h) => {
+// He has a small mole just to the right of his philtrum (his right). The picture is mirrored when he walks left,
+// so the left-facing set (left = true) draws it on the other side, to keep it on his right cheek.
+export function jasper(f = 0, left = false) {
+  return cutout('jasper' + f + (left ? 'L' : ''), 1.05, 1.75, (a, w, h) => {
     scaled(a, w, h, 105, 175);
     const sw = f === 1 ? 1 : f === 2 ? -1 : 0, up = f === 3;
     // legs and shoes
@@ -80,6 +82,7 @@ export function jasper(f = 0) {
     cheek(a, 56, 68, 7); cheek(a, 90, 66, 6);
     if (up) { a.beginPath(); a.moveTo(66, 70); a.quadraticCurveTo(76, 84, 86, 69); a.closePath(); P(a, '#c4433b', 3); }
     else arcL(a, 76, 66, 8, 0.25, 2.6, 3.2);
+    circ(a, left ? 80.5 : 70.5, 64.5, 1.8, '#2a1a12', 0); // the mole
   });
 }
 
@@ -388,6 +391,7 @@ export function steamer(part = 'base') {
     scaled(a, w, h, 100, 62);
     rr(a, 4, 6, 92, 54, 10, '#e6c27a', 3.5);
     a.save(); a.globalAlpha = 0.45; for (const y of [20, 34, 48]) line(a, [[8, y], [92, y]], 2.5, '#a8742e'); a.restore();
+    if (part === 'peek') { circ(a, 34, 0, 8, '#2c2a2e', 2.5); circ(a, 66, 0, 8, '#2c2a2e', 2.5); a.beginPath(); a.arc(50, 12, 22, Math.PI, 0); a.closePath(); P(a, '#fbfaf5', 3); ell(a, 42, 4, 5, 6, 0.5, '#2c2a2e', 0); ell(a, 58, 4, 5, 6, -0.5, '#2c2a2e', 0); circ(a, 42, 4, 2, '#fff', 0); circ(a, 58, 4, 2, '#fff', 0); }
     if (part === 'buns') for (const x of [26, 50, 74]) { a.beginPath(); a.arc(x, 10, 13, Math.PI, 0); a.closePath(); P(a, '#fffaf0', 3); line(a, [[x - 4, 0], [x, 4], [x + 4, 0]], 2); }
   });
 }
@@ -444,12 +448,39 @@ export function plank() {
     line(a, [[18, 0], [18, 250]], 5, '#8a5a34'); line(a, [[97, 0], [97, 250]], 5, '#8a5a34');
   });
 }
+export function plankSeg() {
+  return cutout('plankseg', 1.15, 0.72, (a, w, h) => {
+    scaled(a, w, h, 115, 72);
+    for (let y = 0; y < 72; y += 24) rr(a, 4, y + 2, 107, 21, 5, ['#d9a86a', '#c99a5c'][Math.round(y / 24) % 2], 3);
+    line(a, [[18, 0], [18, 72]], 5, '#8a5a34'); line(a, [[97, 0], [97, 72]], 5, '#8a5a34');
+  });
+}
+// a flower-shaped stepping pad, printed flat (lit = glowing)
+export function pad(col, lit = false) {
+  return cutout('pad' + col + lit, 1.05, 1.05, (a, w, h) => {
+    scaled(a, w, h, 105, 105);
+    for (let k = 0; k < 6; k++) { const t = (k / 6) * Math.PI * 2; circ(a, 52 + Math.cos(t) * 28, 52 + Math.sin(t) * 28, 22, lit ? '#fffbe0' : col, 3.5); }
+    a.fillStyle = lit ? '#fffbe0' : col; for (let k = 0; k < 6; k++) { const t = (k / 6) * Math.PI * 2; a.beginPath(); a.arc(52 + Math.cos(t) * 28, 52 + Math.sin(t) * 28, 20, 0, 7); a.fill(); }
+    circ(a, 52, 52, 18, lit ? col : '#ffe066', 3.5);
+  });
+}
+// a soot sprite that wanders the forest at night
+export function soot(f = 0) {
+  return cutout('soot' + f, 0.9, 0.85, (a, w, h) => {
+    scaled(a, w, h, 90, 85);
+    line(a, [[30, 66], [26 - f * 4, 84]], 4); line(a, [[60, 66], [64 + f * 4, 84]], 4);
+    for (let k = 0; k < 22; k++) { const t = (k / 22) * Math.PI * 2; poly(a, [[45 + Math.cos(t - 0.15) * 30, 42 + Math.sin(t - 0.15) * 28], [45 + Math.cos(t) * 42, 42 + Math.sin(t) * 40], [45 + Math.cos(t + 0.15) * 30, 42 + Math.sin(t + 0.15) * 28]], '#24212a', 0); }
+    circ(a, 45, 42, 32, '#2c2a33', 0);
+    circ(a, 33, 38, 10, '#fff', 0); circ(a, 57, 38, 10, '#fff', 0); circ(a, 35 + f * 2, 39, 4.5, '#2a1a12', 0); circ(a, 59 + f * 2, 39, 4.5, '#2a1a12', 0);
+    arcL(a, 45, 56, 6, Math.PI * 1.15, Math.PI * 1.85, 3, '#fff');
+  });
+}
 export function pullTab(word) {
-  return cutout('tab' + word, 0.9, 0.7, (a, w, h) => {
-    scaled(a, w, h, 90, 70);
-    rr(a, 4, 4, 82, 62, 14, '#ffd34d', 4);
-    poly(a, [[45, 60], [26, 38], [38, 38], [38, 12], [52, 12], [52, 38], [64, 38]], '#ff7a59', 3);
-    a.fillStyle = OL; a.font = 'bold 15px sans-serif'; a.textAlign = 'left'; a.fillText(word, 6, 20);
+  return cutout('tab' + word, 0.9, 0.8, (a, w, h) => {
+    scaled(a, w, h, 90, 80);
+    rr(a, 4, 4, 82, 72, 14, '#ffd34d', 4);
+    a.fillStyle = OL; a.font = 'bold 40px sans-serif'; a.textAlign = 'center'; a.textBaseline = 'middle'; a.fillText(word, 45, 32);
+    poly(a, [[45, 74], [33, 60], [57, 60]], '#ff7a59', 3);
   });
 }
 export function wheel() {

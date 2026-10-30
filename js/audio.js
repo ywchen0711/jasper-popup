@@ -51,6 +51,10 @@ export function sfx(name) {
     case 'bump': tone(160, t, 0.12, { vol: 0.12, to: 90 }); break;
     case 'slide': noise(t, 0.5, { vol: 0.08, f: 5000, q: 3 }); break;
     case 'cheer': [60, 64, 67, 72, 76, 79, 84].forEach((n, i) => bell(N(n), t + i * 0.09, 0.12)); for (let i = 0; i < 8; i++) noise(t + 0.6 + i * 0.05, 0.1, { vol: 0.05, f: 3000 + Math.random() * 2000, q: 4 }); break;
+    case 'n0': case 'n1': case 'n2': case 'n3': { const f = N([72, 76, 79, 84][+name[1]]); bell(f, t, 0.18); tone(f / 2, t, 0.4, { vol: 0.08, type: 'triangle' }); break; }
+    case 'buzz': tone(140, t, 0.35, { vol: 0.12, type: 'sawtooth', to: 110 }); break;
+    case 'whoosh': noise(t, 0.3, { vol: 0.12, f: 600, to: 2400, q: 0.7 }); break;
+    case 'giggle': for (let i = 0; i < 4; i++) tone(1200 + (i % 2) * 300, t + i * 0.07, 0.06, { vol: 0.05, type: 'triangle' }); break;
     case 'hum': tone(N(67), t, 0.3, { vol: 0.06, type: 'triangle' }); tone(N(71), t + 0.25, 0.4, { vol: 0.06, type: 'triangle' }); break;
   }
 }
