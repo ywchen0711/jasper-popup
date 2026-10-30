@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Jasper 的立體書：熊貓寶寶在哪裡？</title>
+<meta name="description" content="A pop-up book adventure: Jasper helps Panda Mom find her five lost panda babies.">
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<canvas id="view"></canvas>
+
+<div id="title">
+  <div class="card">
+    <h1 data-t="titleH">Jasper 的立體書</h1>
+    <button id="startBtn" class="big" data-t="start">打開書本 ▶</button>
+    <button id="continue" class="mid" data-t="cont" hidden>從上次的地方繼續</button>
+    <div class="row">
+      <button data-lang="zh">中文</button><button data-lang="en">English</button>
+    </div>
+    <div class="row settings0"><button id="voiceBtn" class="small">🔊 朗讀</button><button id="musicBtn" class="small">🎵 音樂</button></div>
+    <p class="tip" data-t="tip"></p>
+  </div>
+</div>
+
+<div id="hud" hidden>
+  <div id="goal" hidden><b data-t="goalHead">現在要做</b><span id="goalText"></span></div>
+  <div id="right"><div id="babies"></div><div id="stars">⭐ 0 / 5</div><button id="menuBtn" aria-label="menu">☰</button></div>
+</div>
+
+<div id="prompt" hidden><span class="icon">✋</span><span class="lbl"></span></div>
+<div id="bubble" class="bubble" hidden><div class="name"></div><div class="text"></div><i>▼</i></div>
+<div id="story" hidden><div class="name"></div><div class="text"></div><i>▼</i></div>
+
+<div id="menu" hidden>
+  <div class="card">
+    <button id="resumeBtn" class="mid" data-t="resume">繼續讀</button>
+    <div class="settings"></div>
+    <div class="row"><button data-lang="zh">中文</button><button data-lang="en">English</button></div>
+    <button id="coverBtn" class="mid ghost" data-t="cover">闔上書本</button>
+  </div>
+</div>
+
+<div id="end" hidden>
+  <div class="card">
+    <h2 data-t="theend">全劇終</h2>
+    <p><span data-t="starsGot">找到的星星</span>：⭐ <b id="endStars">0</b> / 5</p>
+    <p id="endMsg"></p>
+    <button id="againBtn" class="big" data-t="again">再讀一次</button>
+  </div>
+</div>
+
+<script type="module" src="js/main.js?v=1"></script>
+</body>
+</html>

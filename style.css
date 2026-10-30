@@ -1,0 +1,64 @@
+:root {
+  --ink: #4a3122; --paper: #fffaf0; --paper2: #f6ecd8; --accent: #ff7a59; --sun: #ffd34d; --shadow: rgba(60, 35, 20, .28);
+  --font: "Comic Sans MS", "Chalkboard SE", "Arial Rounded MT Bold", "Microsoft JhengHei", "PingFang TC", sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; overflow: hidden; background: #3a2a22; color: var(--ink); font-family: var(--font); -webkit-user-select: none; user-select: none; touch-action: none; }
+#view { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+[hidden] { display: none !important; }
+button { font-family: var(--font); color: var(--ink); cursor: pointer; border: 3px solid var(--ink); background: var(--paper); border-radius: 16px; padding: 8px 16px; font-size: 17px; font-weight: bold; box-shadow: 0 4px 0 var(--ink); transition: transform .08s; }
+button:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+button.big { font-size: 26px; padding: 12px 30px; background: var(--sun); }
+button.mid { font-size: 19px; background: #bfe6ff; }
+button.ghost { background: var(--paper2); }
+button.small { font-size: 15px; padding: 6px 12px; }
+button.on { background: var(--accent); color: #fff; }
+
+/* the title card sits under the closed book */
+#title { position: fixed; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); display: flex; justify-content: center; pointer-events: none; }
+#title .card { pointer-events: auto; }
+.card { background: var(--paper); border: 4px solid var(--ink); border-radius: 26px; padding: 16px 22px; box-shadow: 0 8px 0 var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 10px; max-width: min(520px, calc(100vw - 32px)); }
+#title h1 { display: none; }
+.row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
+.tip { margin: 0; font-size: 13px; opacity: .75; text-align: center; }
+
+/* HUD */
+#hud { position: fixed; inset: 0; pointer-events: none; }
+#goal { position: absolute; left: 12px; top: 12px; max-width: min(420px, calc(100vw - 210px)); background: var(--paper); border: 3px solid var(--ink); border-radius: 16px; padding: 7px 12px; box-shadow: 0 5px 0 var(--shadow); font-size: 16px; line-height: 1.35; transform: rotate(-1deg); }
+#goal b { display: block; font-size: 12px; color: var(--accent); }
+#goal.new { animation: goalIn .5s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes goalIn { from { transform: scale(.6) rotate(-6deg); opacity: 0; } }
+#right { position: absolute; right: 12px; top: 12px; display: flex; flex-direction: column; align-items: flex-end; gap: 6px; pointer-events: auto; }
+#babies { display: flex; gap: 2px; background: var(--paper); border: 3px solid var(--ink); border-radius: 16px; padding: 3px 6px; box-shadow: 0 5px 0 var(--shadow); }
+#babies img { width: 34px; height: 38px; filter: grayscale(1) brightness(1.6) opacity(.35); transition: filter .4s, transform .4s; }
+#babies img.got { filter: none; transform: scale(1.12); }
+#stars { background: var(--paper); border: 3px solid var(--ink); border-radius: 14px; padding: 2px 10px; font-weight: bold; box-shadow: 0 4px 0 var(--shadow); }
+#menuBtn { padding: 2px 12px; font-size: 20px; }
+
+/* the "do this" bubble over a thing you can touch */
+#prompt { position: fixed; left: 0; top: 0; display: flex; align-items: center; gap: 6px; padding: 6px 12px 6px 8px; background: var(--sun); border: 3px solid var(--ink); border-radius: 20px; box-shadow: 0 4px 0 var(--shadow); font-weight: bold; font-size: 16px; cursor: pointer; animation: bob 1s ease-in-out infinite; white-space: nowrap; }
+#prompt .icon { font-size: 22px; }
+@keyframes bob { 50% { margin-top: -6px; } }
+
+/* speech */
+.bubble { position: fixed; left: 0; top: 0; max-width: min(360px, calc(100vw - 24px)); background: #fff; border: 3px solid var(--ink); border-radius: 22px; padding: 10px 16px 12px; box-shadow: 0 6px 0 var(--shadow); font-size: 19px; line-height: 1.4; cursor: pointer; }
+.bubble::after { content: ""; position: absolute; left: 50%; bottom: -14px; margin-left: -10px; border: 10px solid transparent; border-top: 14px solid var(--ink); border-bottom: 0; }
+.bubble .name, #story .name { font-size: 13px; color: var(--accent); font-weight: bold; }
+.bubble i, #story i { position: absolute; right: 12px; bottom: 4px; font-style: normal; font-size: 12px; opacity: 0; }
+.bubble.done i, #story.done i { opacity: .7; animation: bob 1s infinite; }
+#story { position: fixed; left: 50%; bottom: max(16px, env(safe-area-inset-bottom)); transform: translateX(-50%); width: min(680px, calc(100vw - 24px)); background: var(--paper); border: 4px solid var(--ink); border-radius: 18px; padding: 14px 22px 18px; box-shadow: 0 8px 0 var(--shadow); font-size: 21px; line-height: 1.5; cursor: pointer; text-align: center;
+  background-image: repeating-linear-gradient(transparent 0 31px, rgba(160, 120, 80, .14) 31px 32px); }
+.pip { position: fixed; transform: translate(-50%, -100%); background: #fff; border: 3px solid var(--ink); border-radius: 16px; padding: 3px 10px; font-weight: bold; font-size: 16px; pointer-events: none; white-space: nowrap; box-shadow: 0 3px 0 var(--shadow); }
+
+#menu, #end { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(40, 25, 15, .35); }
+#menu .settings { display: flex; gap: 8px; }
+#end h2 { margin: 4px 0 0; font-size: 40px; color: var(--accent); }
+#end p { margin: 0; font-size: 18px; text-align: center; }
+
+@media (max-width: 600px) {
+  #goal { font-size: 14px; max-width: calc(100vw - 150px); }
+  #babies img { width: 24px; height: 27px; }
+  .bubble { font-size: 17px; }
+  #story { font-size: 18px; padding: 10px 14px 14px; }
+  button.big { font-size: 22px; }
+}
